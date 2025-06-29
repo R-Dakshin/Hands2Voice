@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>British Sign Language Translator</title>
+
+
+  <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+    }
+
+    .main-title {
+      text-align: center;
+      background-color: #0d6efd;
+      color: white;
+      padding: 2rem 1rem;
+    }
+
+    .subtitle {
+      margin-top: 0.5rem;
+      font-size: 1.2rem;
+      color: #d9e8ff;
+    }
+
+    .switchbutton, .random-button {
+      background-color: #ffffff;
+      border: 2px solid #0d6efd;
+      color: #0d6efd;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      margin: 0.5rem;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .switchbutton:hover, .random-button:hover {
+      background-color: #0d6efd;
+      color: #fff;
+    }
+
+    .translate-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      padding: 2rem;
+    }
+
+    .transdiv {
+      width: 45%;
+      margin: 1rem 0;
+      padding: 1rem;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .recordbutton {
+      background-color: #198754;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      margin-right: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .recordbutton:hover {
+      background-color: #146c43;
+    }
+
+    video, canvas, img {
+      width: 100%;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    #prediction-letter {
+      font-size: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    #prediction-score {
+      font-size: 1rem;
+      color: #888;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main-title">
+    <h1>Sign Language Translator <span style='display:block; width:0px; height:0;'></h1>
+    <h2 class="subtitle">English into British Sign Language Alphabet</h2>
+    <div>
+      <a href="./about.html" class="switchbutton">About</a>
+    </div>
+  </div>
+
+  <div class="translate-container">
+    <div class="transdiv english">
+      <h3>Live Feed</h3>
+      <video id="video" autoplay></video>
+      <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
+    </div>
+
+    <div class="transdiv ghetto">
+      <h3>Detection Output</h3>
+      <img id="processed-frame" src="" />
+      <p id="prediction-letter"></p>
+      <p id="prediction-score"></p>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    const processedFrame = document.getElementById('processed-frame');
+    const letterElem = document.getElementById('prediction-letter');
+    const scoreElem = document.getElementById('prediction-score');
+
+    const socket = io();
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((stream) => {
+        video.srcObject = stream;
+        setInterval(captureAndSend, 500);
+      });
+
+    function captureAndSend() {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const image_data = canvas.toDataURL('image/jpeg').split(',')[1];
+      socket.emit('image', image_data);
+    }
+
+    socket.on('processed_frame', (data) => {
+      processedFrame.src = 'data:image/jpeg;base64,' + data.frame;
+      letterElem.textContent = 'Predicted Letter: ' + data.letter;
+      scoreElem.textContent = 'Confidence Score: ' + data.prediction_score;
+    });
+  </script>
+</body>
+
+</html>

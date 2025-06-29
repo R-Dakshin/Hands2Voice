@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About - BSL Translator</title>
+
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+    }
+
+    .main-title {
+      text-align: center;
+      background-color: #0d6efd;
+      color: white;
+      padding: 2rem 1rem;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: #d9e8ff;
+      margin-top: 0.5rem;
+    }
+
+    .switchbutton {
+      background-color: #ffffff;
+      border: 2px solid #0d6efd;
+      color: #0d6efd;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      margin: 0.5rem;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .switchbutton:hover {
+      background-color: #0d6efd;
+      color: #fff;
+    }
+
+    .about-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .about-container h2 {
+      margin-top: 0;
+    }
+
+    .about-container p {
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-title">
+    <h1>About This Project</h1>
+    <h2 class="subtitle">Learn how the BSL Translator works</h2>
+    <div>
+      <a href="./index.html" class="switchbutton">Back to Translator</a>
+    </div>
+  </div>
+
+  <div class="about-container">
+    <h2>Overview</h2>
+    <p>This British Sign Language (BSL) Translator enables real-time translation of hand gestures into English letters using computer vision and machine learning.</p>
+
+    <h2>How It Works</h2>
+    <p>It captures video input through your webcam, processes each frame with a trained deep learning model, and identifies hand gestures that correspond to BSL characters. Predictions are displayed along with a confidence score.</p>
+
+    <h2>Technologies Used</h2>
+    <ul>
+      <li>Python + Flask + Flask-SocketIO</li>
+      <li>TensorFlow + MobileNetV2</li>
+      <li>OpenCV for image processing</li>
+      <li>JavaScript for camera and socket integration</li>
+    </ul>
+
+    <h2>Acknowledgements</h2>
+    <p>This project is built to improve accessibility and promote the understanding of sign languages through AI technology.</p>
+    <h2>Done by</h2>
+    <ul>
+      <li>Dakshin</li>
+      <li>Deepak</li>
+      <li>Akshita</li>
+      <li>Sudhuksha</li>
+    </ul>
+  </div>
+
+</body>
+</html>
