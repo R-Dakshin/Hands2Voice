@@ -45,6 +45,6 @@ python webcam_detect.py
 - **Dakshin**
 - **Deepak**
 - **Akshita**
-- **Sudhuksha**
+- **Sudhiksha**
 
 ---
