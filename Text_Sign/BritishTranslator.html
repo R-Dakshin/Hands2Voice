@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>British Sign Language Translator</title>
+
+  <link rel="stylesheet" href="./css/main.css">
+
+  <script src="./js/jquery-1.9.1.min.js"></script>
+  <script src="./js/translator.js"></script>
+  <script src="./js/translate.js"></script>
+  <script src="js/jquery-3.2.1.min.js"></script>
+  <script src="js/speechtext.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+    }
+
+    .main-title {
+      text-align: center;
+      background-color: #0d6efd;
+      color: white;
+      padding: 2rem 1rem;
+    }
+
+    .subtitle {
+      margin-top: 0.5rem;
+      font-size: 1.2rem;
+      color: #d9e8ff;
+    }
+
+    .switchbutton, .random-button {
+      background-color: #ffffff;
+      border: 2px solid #0d6efd;
+      color: #0d6efd;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      margin: 0.5rem;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .switchbutton:hover, .random-button:hover {
+      background-color: #0d6efd;
+      color: #fff;
+    }
+
+    .translate-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      padding: 2rem;
+    }
+
+    .transdiv {
+      width: 45%;
+      margin: 1rem 0;
+      padding: 1rem;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .recordbutton {
+      background-color: #198754;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      margin-right: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .recordbutton:hover {
+      background-color: #146c43;
+    }
+
+    textarea {
+      flex: 1;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-size: 1rem;
+      resize: vertical;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    #flags img {
+      max-width: 80px;
+      max-height: 80px;
+      margin: 1%;
+    }
+
+    .no-browser-support {
+      color: #ffc107;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main-title">
+    <h1>Sign Language Translator <span style='display:block; width:0px; height:0;'></h1>
+    <h2 class="subtitle">English into British Sign Language Alphabet</h2>
+    <div>
+      <h3 class="no-browser-support">Sorry, Your Browser Doesn't Support the Speech API. Please Open This In Google Chrome.</h3>
+      <a href="./AmericanTranslator.html" class="switchbutton">American</a>
+      <a href="./BritishTranslator.html" class="switchbutton">British</a>
+      <br />
+      <br>
+      <a id="random-sentence" class="random-button">Random Sentence</a>
+    </div>
+  </div>
+
+  <div class="translate-container">
+    <div class="transdiv english">
+      <div>
+        <button id="pause-record-btn" class="recordbutton">Pause</button>
+        <button id="start-record-btn" class="recordbutton">Record</button>
+      </div>
+      <textarea id="english-text" placeholder="English goes here..."></textarea>
+    </div>
+
+    <div class="transdiv ghetto">
+      <textarea id="ghetto-text" placeholder="And British Sign Language will appear here..." style="display:none;"></textarea>
+      <div id="flags"></div>
+    </div>
+  </div>
+
+  <script>
+    var reverseIsDisabled = false;
+    $('body').append("<div id='preload_flags' style='display:none;'></div>");
+
+    var alphanum = "abcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < alphanum.length; i++) {
+      $("#preload_flags").append("<img src='./images/BSL_signs/" + alphanum[i] + ".png' />");
+    }
+    $("#preload_flags").append("<img src='./images/BSL_signs/_space.png' />");
+
+    function forward(text) {
+      $("#flags").html("");
+      for (var i = 0; i < text.length; i++) {
+        if (text[i].match(/[a-z0-9]/i)) {
+          $("#flags").append("<img src='./images/BSL_signs/" + text[i].toLowerCase() + ".png' alt='BSL letter for: " + text[i] + "' />");
+        } else if (text[i].match(/\s/)) {
+          $("#flags").append("<img src='./images/BSL_signs/_space.png' alt='space / pause' />");
+        }
+      }
+      return "";
+    }
+
+    reverseIsDisabled = true;
+    function backward(text) {
+      return $('#english-text').val();
+    }
+
+    try {
+      var jsonData = { "phrases1": "", "phrases2": "", "words1": "", "words2": "", "intraword1": "", "intraword2": "", "prefixes1": "", "prefixes2": "", "suffixes1": "", "suffixes2": "", "regex1": "", "regex2": "", "rev_regex1": "", "rev_regex2": "", "ordering1": "", "ordering2": "" };
+      phrases1 = jsonData.phrases1.split("\n");
+      phrases2 = jsonData.phrases2.split("\n");
+      words1 = jsonData.words1.split("\n");
+      words2 = jsonData.words2.split("\n");
+      intraword1 = jsonData.intraword1.split("\n");
+      intraword2 = jsonData.intraword2.split("\n");
+      prefixes1 = jsonData.prefixes1.split("\n");
+      prefixes2 = jsonData.prefixes2.split("\n");
+      suffixes1 = jsonData.suffixes1.split("\n");
+      suffixes2 = jsonData.suffixes2.split("\n");
+      regex1 = jsonData.regex1.split("\n");
+      regex2 = jsonData.regex2.split("\n");
+      rev_regex1 = jsonData.rev_regex1.split("\n");
+      rev_regex2 = jsonData.rev_regex2.split("\n");
+      ordering1 = jsonData.ordering1.split("\n");
+      ordering2 = jsonData.ordering2.split("\n");
+    } catch (err) {
+      alert("Ahh an error! Please contact me via talhanasim@gmail.com and I'll fix it asap. Error log: " + err.message);
+    }
+  </script>
+</body>
+
+</html>
